@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN"
+	"http://www.seasar.org/dtd/components24.dtd">
+<components>
+	<include path="javaee5.dicon"/>
+
+	<component class="org.seasar.cayenne.jpa.impl.S2CayenneConfigurationImpl">
+		<initMethod name="addPersistenceClass">
+			<arg>@org.seasar.cayenne.jpa.entity.Department2@class</arg>
+		</initMethod>
+	</component>
+</components>

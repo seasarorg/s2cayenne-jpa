@@ -16,36 +16,69 @@
 package org.seasar.cayenne.jpa.util;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.cayenne.jpa.JtaEntityManagerFactory;
-import org.seasar.framework.container.annotation.tiger.Binding;
-import org.seasar.framework.container.annotation.tiger.BindingType;
 import org.seasar.framework.container.annotation.tiger.DestroyMethod;
+import org.seasar.framework.jpa.PersistenceUnitManager;
+import org.seasar.framework.jpa.PersistenceUnitManagerLocater;
+import org.seasar.framework.jpa.impl.PersistenceUnitManagerImpl;
+import org.seasar.framework.jpa.impl.PersistenceUnitManagerImpl.ContextMap;
 import org.seasar.framework.util.tiger.ReflectionUtil;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneResourceDisposer {
 
-	protected static Field transactionRegistryField;
+	private static Field contextMapField = getContextMapField();
 
-	static {
-		transactionRegistryField = ReflectionUtil.getDeclaredField(
-				JtaEntityManagerFactory.class, "transactionRegistry");
-		transactionRegistryField.setAccessible(true);
-	}
+	private static Field entityManagerFactoriesField = getEntityManagerFactoriesField();
 
-	@Binding(bindingType = BindingType.MUST)
-	protected EntityManagerFactory emf;
+	private static Field transactionRegistryField = getTransactionRegistryField();
 
 	@DestroyMethod
 	public void dispose() {
-		if (emf instanceof JtaEntityManagerFactory) {
-			ReflectionUtil.setValue(transactionRegistryField, emf, null);
+		final PersistenceUnitManager manager = PersistenceUnitManagerLocater
+				.getInstance();
+		if (!PersistenceUnitManagerImpl.class.isInstance(manager)) {
+			return;
 		}
+		ContextMap contextMap = ReflectionUtil.getValue(contextMapField,
+				manager);
+		if (contextMap == null) {
+			return;
+		}
+		Map<String, EntityManagerFactory> entityManagerFactories = ReflectionUtil
+				.getValue(entityManagerFactoriesField, contextMap);
+		for (EntityManagerFactory emf : entityManagerFactories.values()) {
+			if (emf instanceof JtaEntityManagerFactory) {
+				ReflectionUtil.setValue(transactionRegistryField, emf, null);
+			}
+		}
+	}
+
+	private static Field getContextMapField() {
+		Field field = ReflectionUtil.getDeclaredField(
+				PersistenceUnitManagerImpl.class, "contextMap");
+		field.setAccessible(true);
+		return field;
+	}
+
+	private static Field getEntityManagerFactoriesField() {
+		Field field = ReflectionUtil.getDeclaredField(ContextMap.class,
+				"entityManagerFactories");
+		field.setAccessible(true);
+		return field;
+	}
+
+	private static Field getTransactionRegistryField() {
+		Field field = ReflectionUtil.getDeclaredField(
+				JtaEntityManagerFactory.class, "transactionRegistry");
+		field.setAccessible(true);
+		return field;
 	}
 }

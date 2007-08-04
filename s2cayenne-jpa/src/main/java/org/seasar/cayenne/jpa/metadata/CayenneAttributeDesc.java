@@ -36,7 +36,7 @@ import org.seasar.framework.util.tiger.CollectionsUtil;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneAttributeDesc implements AttributeDesc {
 
@@ -68,8 +68,9 @@ public class CayenneAttributeDesc implements AttributeDesc {
 			.newHashMap();
 
 	protected CayenneAttributeDesc(final Property property, final String name,
-			final int sqlType, final boolean id, final boolean version, final boolean association,
-			final boolean collection, final boolean component) {
+			final int sqlType, final boolean id, final boolean version,
+			final boolean association, final boolean collection,
+			final boolean component) {
 		this.property = property;
 		this.name = name;
 		this.sqlType = sqlType;

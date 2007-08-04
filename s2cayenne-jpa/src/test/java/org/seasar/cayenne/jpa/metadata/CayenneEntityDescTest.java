@@ -31,17 +31,17 @@ import org.seasar.framework.jpa.metadata.EntityDescFactory;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneEntityDescTest extends S2TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		include("javaee5.dicon");
 		include("jpa.dicon");
 	}
 
 	public void test() throws Exception {
-		Department dept = new Department();
 		EntityDesc entityDesc = EntityDescFactory
 				.getEntityDesc(Department.class);
 		assertNotNull(entityDesc);

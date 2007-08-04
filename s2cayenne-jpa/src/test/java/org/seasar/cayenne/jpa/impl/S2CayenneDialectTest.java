@@ -22,7 +22,7 @@ import org.seasar.framework.jpa.Dialect;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class S2CayenneDialectTest extends S2TestCase {
 

@@ -17,7 +17,7 @@ package org.seasar.cayenne.jpa.entity.aaa;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class Dummy2 {
 

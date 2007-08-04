@@ -16,33 +16,38 @@
 package org.seasar.cayenne.jpa;
 
 import javax.persistence.EntityManager;
+import javax.transaction.TransactionManager;
 
 import org.seasar.extension.unit.S2TestCase;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class EntityManagerTest extends S2TestCase {
 
 	private EntityManager em;
 
+	private TransactionManager tm;
+
 	@Override
 	protected void setUp() throws Exception {
+		include("javaee5.dicon");
 		include("jpa.dicon");
 	}
 
 	public void testLookup() throws Exception {
-		assertNotNull(em);
+		assertNotNull("1", em);
 	}
 
 	public void testFind() throws Exception {
-		assertNotNull(em.find(Department.class, 10));
+		assertNotNull("1", em.find(Department.class, 10));
 	}
 
 	public void testUpdateTx() throws Exception {
 		Department dept = em.find(Department.class, 10);
-		dept.setDname(dept.getDname() + "x");
+		dept.setDname(dept.getDname() + 2);
+		System.out.println(tm.getStatus());
 		em.flush();
 	}
 }

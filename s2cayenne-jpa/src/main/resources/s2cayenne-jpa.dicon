@@ -3,11 +3,10 @@
 	"http://www.seasar.org/dtd/components24.dtd">
 <components namespace="jpa">
 	<include path="javaee5.dicon"/>
-	<include condition="@org.seasar.framework.container.util.SmartDeployUtil@isSmartdeployMode(container)"
-		path="s2cayenne-jpa-smart.dicon"/>
 
-	<component class="org.seasar.cayenne.jpa.impl.S2CayennePersistenceUnitProvider"/>			
-	<component class="org.seasar.cayenne.jpa.impl.S2CayenneConfigurationImpl"/>
 	<component class="org.seasar.cayenne.jpa.impl.S2CayenneDialect"/>
-	
+	<component class="org.seasar.cayenne.jpa.metadata.CayenneEntityDescProvider"/>
+	<component class="org.seasar.cayenne.jpa.unit.CayenneEntityReaderProvider"/>
+	<component class="org.seasar.cayenne.jpa.util.CayenneResourceDisposer"/>
+
 </components>

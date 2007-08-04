@@ -15,12 +15,17 @@
  */
 package org.seasar.cayenne.jpa.impl;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 
 import javax.persistence.EntityManager;
-import javax.persistence.spi.PersistenceUnitInfo;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
+import org.apache.cayenne.access.DataDomain;
+import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.jpa.Provider;
+import org.apache.cayenne.jpa.ResourceLocalEntityManagerFactory;
 import org.seasar.extension.jdbc.util.DataSourceUtil;
 import org.seasar.framework.container.annotation.tiger.Binding;
 import org.seasar.framework.container.annotation.tiger.BindingType;
@@ -28,12 +33,18 @@ import org.seasar.framework.container.annotation.tiger.DestroyMethod;
 import org.seasar.framework.container.annotation.tiger.InitMethod;
 import org.seasar.framework.jpa.Dialect;
 import org.seasar.framework.jpa.DialectManager;
+import org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy;
+import org.seasar.framework.util.tiger.ReflectionUtil;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class S2CayenneDialect implements Dialect {
+
+	private static Field emfField = getEmfField();
+
+	private static Field domainField = getDomainField();
 
 	@Binding(bindingType = BindingType.MUST)
 	protected DialectManager dialectManager;
@@ -49,11 +60,31 @@ public class S2CayenneDialect implements Dialect {
 	}
 
 	public Connection getConnection(final EntityManager em) {
-		final Object delegate = em.getDelegate();
-		final S2CayennePersistenceUnitProvider provider = S2CayennePersistenceUnitProvider.class
-				.cast(delegate);
-		final PersistenceUnitInfo unitInfo = provider.getPersistenceUnitInfo();
-		return DataSourceUtil.getConnection(unitInfo.getJtaDataSource());
+		if (!TxScopedEntityManagerProxy.class.isInstance(em)) {
+			return null;
+		}
+		EntityManagerFactory emf = ReflectionUtil.getValue(emfField, em);
+		if (!ResourceLocalEntityManagerFactory.class.isInstance(emf)) {
+			return null;
+		}
+		DataDomain domain = ReflectionUtil.getValue(domainField, emf);
+		String name = domain.getName();
+		DataNode dataNode = domain.getNode(name);
+		DataSource dataSource = dataNode.getDataSource();
+		return DataSourceUtil.getConnection(dataSource);
 	}
 
+	private static Field getEmfField() {
+		final Field field = ReflectionUtil.getDeclaredField(
+				TxScopedEntityManagerProxy.class, "emf");
+		field.setAccessible(true);
+		return field;
+	}
+
+	private static Field getDomainField() {
+		final Field field = ReflectionUtil.getDeclaredField(
+				ResourceLocalEntityManagerFactory.class, "domain");
+		field.setAccessible(true);
+		return field;
+	}
 }

@@ -23,7 +23,7 @@ import org.seasar.framework.jpa.metadata.EntityDescFactory;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneEntityDescProviderTest extends S2TestCase {
 

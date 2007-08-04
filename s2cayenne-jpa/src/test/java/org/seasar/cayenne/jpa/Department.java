@@ -7,6 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Version;
 
+/**
+ * 
+ * @author taedium
+ */
 @Entity(name = "Dept")
 public class Department {
 

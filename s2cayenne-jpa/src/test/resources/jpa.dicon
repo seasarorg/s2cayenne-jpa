@@ -4,18 +4,13 @@
 <components>
 	<include path="s2cayenne-jpa.dicon"/>
 
+	<component name="persistenceUnitProvider" class="org.seasar.framework.jpa.impl.ContainerPersistenceUnitProvider">
+		<property name="unitName">"persistenceUnit"</property>
+	</component>
+
 	<component name="entityManagerFactory" class="javax.persistence.EntityManagerFactory">
-		jpa.persistenceUnitManager.getEntityManagerFactory("persistenceUnit")
+		persistenceUnitProvider.entityManagerFactory
 	</component>
 
 	<component name="entityManager" class="org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy"/>
-	
-	<component class="org.seasar.cayenne.jpa.metadata.CayenneEntityDescProvider"/>
-
-	<!-- for test -->
-	<component name="dataSourceProxy" class="org.seasar.extension.datasource.impl.SingletonDataSourceProxy"/>
-	
-	<!-- for test -->
-	<component class="org.seasar.cayenne.jpa.util.CayenneResourceDisposer"/>	
-
 </components>

@@ -21,7 +21,7 @@ import javax.persistence.Embeddable;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 @Embeddable
 public class Address implements Serializable {

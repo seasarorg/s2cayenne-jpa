@@ -27,7 +27,7 @@ import javax.persistence.TemporalType;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 @Entity(name = "Emp")
 public class Employee {

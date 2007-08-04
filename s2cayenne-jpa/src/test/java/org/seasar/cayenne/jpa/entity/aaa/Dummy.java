@@ -20,7 +20,7 @@ import javax.persistence.Id;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 @Entity
 public class Dummy {

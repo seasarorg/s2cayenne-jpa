@@ -20,8 +20,8 @@ import javax.persistence.EntityManagerFactory;
 import org.seasar.extension.unit.S2TestCase;
 
 /**
- * @author higa
  * 
+ * @author taedium
  */
 public class EntityManagerFactoryTest extends S2TestCase {
 
@@ -29,10 +29,11 @@ public class EntityManagerFactoryTest extends S2TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		include("javaee5.dicon");
 		include("jpa.dicon");
 	}
 
 	public void testLookup() throws Exception {
-		assertNotNull(emf);
+		assertNotNull("1", emf);
 	}
 }

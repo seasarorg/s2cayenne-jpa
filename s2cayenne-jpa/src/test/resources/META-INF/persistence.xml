@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+	http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+	version="1.0"
+>
 
 	<persistence-unit name="persistenceUnit" transaction-type="JTA">
-		<jta-data-source>jdbc/dataSource</jta-data-source>
 		<provider>org.apache.cayenne.jpa.Provider</provider>
+		<jta-data-source>jdbc/dataSource</jta-data-source>
 		<class>org.seasar.cayenne.jpa.Department</class>
 		<class>org.seasar.cayenne.jpa.Employee</class>
 		<properties>
@@ -11,14 +16,4 @@
 		</properties>
 	</persistence-unit>
 	
-	<persistence-unit name="aaaPersistenceUnit" transaction-type="JTA">
-		<jta-data-source>jdbc/dataSource</jta-data-source>
-		<provider>org.apache.cayenne.jpa.Provider</provider>
-		<class>org.seasar.cayenne.jpa.Department</class>
-		<class>org.seasar.cayenne.jpa.Employee</class>
-		<properties>
-			<property name="org.apache.cayenne.adapter" value="org.apache.cayenne.dba.hsqldb.HSQLDBAdapter"/>
-		</properties>
-	</persistence-unit>	
-
 </persistence>

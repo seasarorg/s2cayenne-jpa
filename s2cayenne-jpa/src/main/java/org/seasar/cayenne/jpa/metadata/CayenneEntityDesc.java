@@ -33,7 +33,7 @@ import org.seasar.framework.util.tiger.CollectionsUtil;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneEntityDesc implements EntityDesc {
 

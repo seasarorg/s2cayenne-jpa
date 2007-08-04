@@ -15,48 +15,45 @@
  */
 package org.seasar.cayenne.jpa.metadata;
 
+import java.lang.reflect.Field;
+
 import javax.persistence.EntityManagerFactory;
 
-import org.apache.cayenne.jpa.CayenneEntityManager;
+import org.apache.cayenne.access.DataDomain;
+import org.apache.cayenne.jpa.ResourceLocalEntityManagerFactory;
 import org.apache.cayenne.map.EntityResolver;
 import org.apache.cayenne.map.ObjEntity;
-import org.seasar.framework.container.annotation.tiger.DestroyMethod;
-import org.seasar.framework.container.annotation.tiger.InitMethod;
 import org.seasar.framework.jpa.metadata.EntityDesc;
-import org.seasar.framework.jpa.metadata.EntityDescFactory;
 import org.seasar.framework.jpa.metadata.EntityDescProvider;
+import org.seasar.framework.util.tiger.ReflectionUtil;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class CayenneEntityDescProvider implements EntityDescProvider {
 
-	protected EntityManagerFactory emf;
+	private static Field domainField = getDomainField();
 
-	public CayenneEntityDescProvider(final EntityManagerFactory emf) {
-		this.emf = emf;
-	}
-
-	@InitMethod
-	public void register() {
-		EntityDescFactory.addProvider(this);
-	}
-
-	@DestroyMethod
-	public void unregister() {
-		EntityDescFactory.removeProvider(this);
-	}
-
-	public EntityDesc createEntityDesc(final Class<?> entityClass) {
-		final CayenneEntityManager em = CayenneEntityManager.class.cast(emf
-				.createEntityManager());
-		final EntityResolver resolver = em.getChannel().getEntityResolver();
+	public EntityDesc createEntityDesc(final EntityManagerFactory emf,
+			final Class<?> entityClass) {
+		if (!ResourceLocalEntityManagerFactory.class.isInstance(emf)) {
+			return null;
+		}
+		final DataDomain domain = ReflectionUtil.getValue(domainField, emf);
+		final EntityResolver resolver = domain.getEntityResolver();
 		final ObjEntity objEntity = resolver.lookupObjEntity(entityClass);
 		if (objEntity != null) {
 			return new CayenneEntityDesc(entityClass, objEntity, resolver);
 		}
 		return null;
+	}
+
+	private static Field getDomainField() {
+		final Field field = ReflectionUtil.getDeclaredField(
+				ResourceLocalEntityManagerFactory.class, "domain");
+		field.setAccessible(true);
+		return field;
 	}
 
 }

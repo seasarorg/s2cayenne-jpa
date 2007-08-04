@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * 
- * @author nakamura
+ * @author taedium
  */
 public class Employee2 implements Serializable {
 

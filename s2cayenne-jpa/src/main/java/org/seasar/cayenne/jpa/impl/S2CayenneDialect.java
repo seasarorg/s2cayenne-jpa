@@ -42,49 +42,53 @@ import org.seasar.framework.util.tiger.ReflectionUtil;
  */
 public class S2CayenneDialect implements Dialect {
 
-	private static Field emfField = getEmfField();
+    private static Field emfField = getEmfField();
 
-	private static Field domainField = getDomainField();
+    private static Field domainField = getDomainField();
 
-	@Binding(bindingType = BindingType.MUST)
-	protected DialectManager dialectManager;
+    @Binding(bindingType = BindingType.MUST)
+    protected DialectManager dialectManager;
 
-	@InitMethod
-	public void initialize() {
-		dialectManager.addDialect(Provider.class, this);
-	}
+    @InitMethod
+    public void initialize() {
+        dialectManager.addDialect(Provider.class, this);
+    }
 
-	@DestroyMethod
-	public void destroy() {
-		dialectManager.removeDialect(Provider.class);
-	}
+    @DestroyMethod
+    public void destroy() {
+        dialectManager.removeDialect(Provider.class);
+    }
 
-	public Connection getConnection(final EntityManager em) {
-		if (!TxScopedEntityManagerProxy.class.isInstance(em)) {
-			return null;
-		}
-		EntityManagerFactory emf = ReflectionUtil.getValue(emfField, em);
-		if (!ResourceLocalEntityManagerFactory.class.isInstance(emf)) {
-			return null;
-		}
-		DataDomain domain = ReflectionUtil.getValue(domainField, emf);
-		String name = domain.getName();
-		DataNode dataNode = domain.getNode(name);
-		DataSource dataSource = dataNode.getDataSource();
-		return DataSourceUtil.getConnection(dataSource);
-	}
+    public Connection getConnection(final EntityManager em) {
+        if (!TxScopedEntityManagerProxy.class.isInstance(em)) {
+            return null;
+        }
+        EntityManagerFactory emf = ReflectionUtil.getValue(emfField, em);
+        if (!ResourceLocalEntityManagerFactory.class.isInstance(emf)) {
+            return null;
+        }
+        DataDomain domain = ReflectionUtil.getValue(domainField, emf);
+        String name = domain.getName();
+        DataNode dataNode = domain.getNode(name);
+        DataSource dataSource = dataNode.getDataSource();
+        return DataSourceUtil.getConnection(dataSource);
+    }
 
-	private static Field getEmfField() {
-		final Field field = ReflectionUtil.getDeclaredField(
-				TxScopedEntityManagerProxy.class, "emf");
-		field.setAccessible(true);
-		return field;
-	}
+    public void detach(EntityManager em, Object managedEntity) {
+        throw new UnsupportedOperationException("detach(EntityManager, Object)");
+    }
 
-	private static Field getDomainField() {
-		final Field field = ReflectionUtil.getDeclaredField(
-				ResourceLocalEntityManagerFactory.class, "domain");
-		field.setAccessible(true);
-		return field;
-	}
+    private static Field getEmfField() {
+        final Field field = ReflectionUtil
+                .getDeclaredField(TxScopedEntityManagerProxy.class, "emf");
+        field.setAccessible(true);
+        return field;
+    }
+
+    private static Field getDomainField() {
+        final Field field = ReflectionUtil.getDeclaredField(
+                ResourceLocalEntityManagerFactory.class, "domain");
+        field.setAccessible(true);
+        return field;
+    }
 }
